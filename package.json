@@ -1,11 +1,11 @@
 {
   "name": "casbin-mongodb-adapter",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Pure MongoDB adapter for Casbin",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
-  "repository": "https://github.com/juicycleff/casbin-mongo-adapter",
+  "repository": "https://github.com/juicycleff/casbin-mongodb-adapter",
   "license": "MIT",
   "keywords": [],
   "scripts": {
