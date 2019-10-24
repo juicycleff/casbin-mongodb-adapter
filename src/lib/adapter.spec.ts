@@ -3,9 +3,8 @@
 import test from 'ava';
 import { newEnforcer, Enforcer, newModel } from 'casbin';
 // tslint:disable-next-line: no-implicit-dependencies
-import { MongoMemoryServer } from 'mongodb-memory-server'
+import { MongoMemoryServer } from 'mongodb-memory-server';
 import { MongoAdapter } from './adapter';
-
 
 // Start MongoDB instance
 const mongod = new MongoMemoryServer();
@@ -13,16 +12,15 @@ const mongod = new MongoMemoryServer();
 let adapter: MongoAdapter;
 let e: Enforcer;
 
-const m = newModel()
-m.addDef('r', 'r', 'sub, obj, act')
-m.addDef('p', 'p', 'sub, obj, act')
-m.addDef('g', 'g', '_, _')
-m.addDef('e', 'e', 'some(where (p.eft == allow))')
-m.addDef('m', 'm', 'g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act')
+const m = newModel();
+m.addDef('r', 'r', 'sub, obj, act');
+m.addDef('p', 'p', 'sub, obj, act');
+m.addDef('g', 'g', '_, _');
+m.addDef('e', 'e', 'some(where (p.eft == allow))');
+m.addDef('m', 'm', 'g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act');
 
 test.before('Setting up Casbin and Adapter', async () => {
   try {
-
     const uri = await mongod.getConnectionString();
     adapter = await MongoAdapter.newAdapter({
       uri,
