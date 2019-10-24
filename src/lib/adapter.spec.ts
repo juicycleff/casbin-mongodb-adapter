@@ -77,13 +77,14 @@ test('Add policy against adapter', async t => {
 });
 
 test('Remove filtered policy against adapter', async t => {
-  await t.notThrowsAsync(adapter.removeFilteredPolicy('alice', 'data5', 0, 'read'));
+  await t.notThrowsAsync(
+    adapter.removeFilteredPolicy('alice', 'data5', 0, 'read')
+  );
 });
 
 test('Remove policy against adapter', async t => {
   await t.notThrowsAsync(adapter.removePolicy('alice', 'data5', ['read']));
 });
-
 
 test.after('Close connection', async t => {
   t.notThrows(async () => adapter.close());
