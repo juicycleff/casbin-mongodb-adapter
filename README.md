@@ -3,11 +3,14 @@ casbin-mongodb-adapter
 
 MongoDB policy storage, implemented as an adapter for [node-casbin](https://github.com/casbin/node-casbin).
 
-<a href="https://img.shields.io/github/package-json/v/juicycleff/casbin-mongodb-adapter" target="_blank">
-  <image src="https://img.shields.io/github/package-json/v/juicycleff/casbin-mongodb-adapter" alt="Version" />
-</a>
 <a href="https://img.shields.io/npm/v/casbin-mongodb-adapter" target="_blank">
   <image src="https://img.shields.io/npm/v/casbin-mongodb-adapter" alt="NPM Version" />
+</a>
+<a href="https://img.shields.io/npm/dm/casbin-mongodb-adapter" target="_blank">
+  <image src="https://img.shields.io/npm/dm/casbin-mongodb-adapter" alt="NPM Version" />
+</a>
+<a href="https://img.shields.io/gitter/room/casbin/lobby" target="_blank">
+  <image src="https://img.shields.io/gitter/room/casbin/lobby" alt="Build" />
 </a>
 <a href="https://img.shields.io/codacy/grade/8b44237b493644e788bf0b175708095b/master" target="_blank">
   <image src="https://img.shields.io/codacy/grade/8b44237b493644e788bf0b175708095b/master" alt="Code Quality" />
@@ -17,6 +20,9 @@ MongoDB policy storage, implemented as an adapter for [node-casbin](https://gith
 </a>
 <a href="https://img.shields.io/codecov/c/gh/juicycleff/casbin-mongodb-adapter" target="_blank">
   <image src="https://img.shields.io/codecov/c/gh/juicycleff/casbin-mongodb-adapter" alt="Build" />
+</a>
+<a href="https://img.shields.io/gitter/room/casbin/lobby" target="_blank">
+  <image src="https://img.shields.io/gitter/room/casbin/lobby" alt="Build" />
 </a>
 
 ## Getting Started

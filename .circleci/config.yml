@@ -38,7 +38,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: yarn test
       - run: yarn run cov:send
-      - run: yarn run cov:check
+      # - run: yarn run cov:check
 
 workflows:
   version: 2
