@@ -1,6 +1,6 @@
 
 import {Adapter, Helper, Model} from 'casbin';
-import {Collection, Db, MongoClient, MongoClientOptions} from 'mongodb';
+import {Collection, MongoClient, MongoClientOptions, Db} from 'mongodb';
 import {CasbinRule} from './casbin-rule.entity';
 
 interface MongoAdapterOptions {
@@ -20,7 +20,7 @@ export class MongoAdapter implements Adapter {
      * @param option mongo connection option
      */
     public static async newAdapter(adapterOption: MongoAdapterOptions) {
-      const { uri = 'mongodb://localhost:27017', option, collectionName = 'casbin', databaseName = 'node-casbin-official' } = adapterOption;
+      const { uri = 'mongodb://localhost:27017', option, collectionName = 'casbin', databaseName = 'casbindb' } = adapterOption;
       const a = new MongoAdapter(uri, databaseName, collectionName, option);
       a.open();
       return a;
@@ -29,7 +29,6 @@ export class MongoAdapter implements Adapter {
     private dbName: string;
     private mongoClient: MongoClient;
     private collectionName: string;
-    private mongoDb!: Db;
 
     private constructor(uri: string, dbName: string, collectionName: string, option?: MongoClientOptions) {
       if (!uri || typeof uri !== 'string') {
@@ -40,17 +39,19 @@ export class MongoAdapter implements Adapter {
       this.dbName = dbName;
       this.collectionName = collectionName;
 
-      // Create a new MongoClient
-      this.mongoClient = new MongoClient(uri, option);
+      try {
+        // Create a new MongoClient
+        this.mongoClient = new MongoClient(uri, {
+          useUnifiedTopology: true,
+          useNewUrlParser: true,
+          ...option
+        });
 
-      // Use connect method to connect to the Server
-      this.mongoClient.connect((err) => {
-        if (err) {
-          // tslint:disable-next-line: no-console
-          console.log('Connected correctly to mongo db');
-        }
-        this.mongoDb = this.mongoClient.db(dbName);
-      });
+      } catch (error) {
+        throw new Error(error.message);
+
+      }
+
 
     }
 
@@ -95,7 +96,12 @@ export class MongoAdapter implements Adapter {
                 lines.push(line);
             }
         }
-        await this.getCollection().save(lines);
+
+        if(Array.isArray(lines) && lines.length > 0) {
+          await this.getCollection().insertMany(lines);
+        } else if(!Array.isArray(lines)) {
+          await this.getCollection().insertOne(lines);
+        }
 
         return true;
     }
@@ -105,7 +111,11 @@ export class MongoAdapter implements Adapter {
      */
     public async addPolicy(_sec: string, ptype: string, rule: string[]) {
         const line = this.savePolicyLine(ptype, rule);
-        await this.getCollection().save(line);
+        if(Array.isArray(line)) {
+          await this.getCollection().insertMany(line);
+        } else {
+          await this.getCollection().insertOne(line);
+        }
     }
 
     /**
@@ -146,24 +156,38 @@ export class MongoAdapter implements Adapter {
     }
 
     private async open() {
-        if (this.mongoClient && !this.mongoClient.isConnected) {
-            this.mongoClient.connect((err) => {
-            if (err) {
-              // tslint:disable-next-line: no-console
-              console.log('Connected correctly to mongo db');
-            }
-            this.mongoDb = this.mongoClient.db(this.dbName);
-          });
-        }
+      try {
+        // Use connect method to connect to the Server
+        this.mongoClient.connect((err) => {
+          if (err) {
+            throw new Error(err.message);
+          }
+        });
+      } catch (error) {
+        throw new Error(error.message);
+
+      }
     }
 
     private getCollection(): Collection {
-      return this.mongoDb.collection(this.collectionName);
+      return this.mongoClient.db(this.dbName).collection(this.collectionName);
     }
 
+    private getDatabase(): Db {
+      return this.mongoClient.db(this.dbName);
+    }
 
     private async clearCollection() {
-      await this.getCollection().drop();
+      try {
+        const list = await this.getDatabase().listCollections({ name: this.collectionName }).toArray();
+
+        if (list && list.length > 0) {
+          await this.getCollection().drop();
+        }
+        return;
+      } catch (error) {
+        return;
+      }
     }
 
     private loadPolicyLine(line: CasbinRule, model: Model) {

@@ -1,5 +1,5 @@
 {
-  "defaultSeverity": "error",
+  "defaultSeverity": "warning",
   "extends": ["tslint:latest", "tslint-config-prettier", "tslint-immutable"],
   "jsRules": {
     "no-unused-expression": true

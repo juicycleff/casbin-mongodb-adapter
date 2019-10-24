@@ -1,4 +1,5 @@
 // tslint:disable:no-expression-statement
+// tslint:disable-next-line: no-implicit-dependencies
 import test from 'ava';
 import {newEnforcer, Enforcer} from 'casbin';
 import * as path from 'path';
@@ -8,30 +9,35 @@ let adapter: MongoAdapter;
 const model = path.resolve(__dirname, 'casbin-files/rbac_model.conf');
 let e: Enforcer;
 
-test.before('lSetting up Casbin and Adapter', async () => {
-  adapter = await MongoAdapter.newAdapter({
-    uri: 'mongodb://localhost:27017',
-    collectionName: 'casbin',
-    databaseName: 'node-casbin-official'
-  });
-  e = await newEnforcer(model, adapter);
+test.before('Setting up Casbin and Adapter', async () => {
+
+  try {
+    adapter = await MongoAdapter.newAdapter({
+      uri: 'mongodb://localhost:27017/demo',
+      collectionName: 'casbin',
+      databaseName: 'casbindb'
+    });
+    e = await newEnforcer(model, adapter);
+  } catch (error) {
+    throw new Error(error.message);
+
+  }
 })
 
-test('Load policy', async () => {
-  const f = await e.loadPolicy();
-  // tslint:disable-next-line: no-console
-  console.log(f)
+test('Add policy', async t => {
+  t.truthy(e.addPolicy('alice', 'data3', 'read'));
 });
 
-test('Check the permission', async () => {
-  const f = await e.enforce('alice', 'data1', 'read');
-  // tslint:disable-next-line: no-console
-  console.log(f)
+test('Save the policy back to DB', async t => {
+  t.true(await e.savePolicy());
 });
 
-test('Save the policy back to DB', async () => {
-  const f = await e.savePolicy();
-  // tslint:disable-next-line: no-console
-  console.log(f)
+
+test('Load policy', async t => {
+  t.deepEqual(await e.loadPolicy(), undefined);
+});
+
+test('Check alice permission', async t => {
+  t.truthy(await e.enforce('alice', 'data1', 'read'));
 });
 
