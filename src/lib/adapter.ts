@@ -25,7 +25,7 @@ export class MongoAdapter implements Adapter {
       databaseName = 'casbindb'
     } = adapterOption;
     const a = new MongoAdapter(uri, databaseName, collectionName, option);
-    a.open();
+    await a.open();
     return a;
   }
 
@@ -105,8 +105,6 @@ export class MongoAdapter implements Adapter {
 
     if (Array.isArray(lines) && lines.length > 0) {
       await this.getCollection().insertMany(lines);
-    } else if (!Array.isArray(lines)) {
-      await this.getCollection().insertOne(lines);
     }
 
     return true;

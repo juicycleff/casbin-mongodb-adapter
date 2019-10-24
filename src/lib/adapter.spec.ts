@@ -1,8 +1,6 @@
-// tslint:disable:no-expression-statement
-// tslint:disable-next-line: no-implicit-dependencies
+// tslint:disable:no-expression-statement no-implicit-dependencies
 import test from 'ava';
 import { newEnforcer, Enforcer, newModel } from 'casbin';
-// tslint:disable-next-line: no-implicit-dependencies
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { MongoAdapter } from './adapter';
 
@@ -33,7 +31,28 @@ test.before('Setting up Casbin and Adapter', async () => {
   }
 });
 
-test('Add policy', async t => {
+test('Missing Mongo URI', async t => {
+  await t.throwsAsync(async () =>
+    MongoAdapter.newAdapter({
+      // @ts-ignore
+      uri: null,
+      collectionName: 'casbin',
+      databaseName: 'casbindb'
+    })
+  );
+});
+
+test('Wrong Mongo Connection String', async t => {
+  await t.throwsAsync(
+    MongoAdapter.newAdapter({
+      uri: 'wrong',
+      collectionName: 'casbin',
+      databaseName: 'casbindb'
+    })
+  );
+});
+
+test('Add policy', t => {
   t.truthy(e.addPolicy('alice', 'data3', 'read'));
 });
 
@@ -47,4 +66,12 @@ test('Load policy', async t => {
 
 test('Check alice permission', async t => {
   t.falsy(await e.enforce('alice', 'data1', 'read'));
+});
+
+test('Save policy against adapter', async t => {
+  t.true(await adapter.savePolicy(m));
+});
+
+test.after('Close connection', async t => {
+  t.notThrows(async () => adapter.close());
 });
