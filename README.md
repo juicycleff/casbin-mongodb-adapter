@@ -3,6 +3,16 @@ casbin-mongodb-adapter
 
 MongoDB policy storage, implemented as an adapter for [node-casbin](https://github.com/casbin/node-casbin).
 
+<a href="https://img.shields.io/github/package-json/v/juicycleff/casbin-mongodb-adapter" target="_blank">
+  <image src="https://img.shields.io/github/package-json/v/juicycleff/casbin-mongodb-adapter" alt="Version" />
+</a>
+<a href="https://img.shields.io/npm/v/casbin-mongodb-adapter" target="_blank">
+  <image src="https://img.shields.io/npm/v/casbin-mongodb-adapter" alt="NPM Version" />
+</a>
+<a href="https://img.shields.io/codacy/grade/8b44237b493644e788bf0b175708095b/master" target="_blank">
+  <image src="https://img.shields.io/codacy/grade/8b44237b493644e788bf0b175708095b/master" alt="Code Quality" />
+</a>
+
 ## Getting Started
 
 Install the package as dependency in your project:

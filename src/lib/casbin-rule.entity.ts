@@ -2,7 +2,6 @@ import { ObjectID } from 'mongodb';
 
 // Casbin Entity
 export class CasbinRule {
-
   // tslint:disable-next-line: variable-name
   public _id!: ObjectID;
 
