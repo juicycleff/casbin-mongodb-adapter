@@ -115,11 +115,7 @@ export class MongoAdapter implements Adapter {
    */
   public async addPolicy(_sec: string, ptype: string, rule: string[]) {
     const line = this.savePolicyLine(ptype, rule);
-    if (Array.isArray(line)) {
-      await this.getCollection().insertMany(line);
-    } else {
-      await this.getCollection().insertOne(line);
-    }
+    await this.getCollection().insertOne(line);
   }
 
   /**

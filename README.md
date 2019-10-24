@@ -15,6 +15,9 @@ MongoDB policy storage, implemented as an adapter for [node-casbin](https://gith
 <a href="https://img.shields.io/circleci/build/github/juicycleff/casbin-mongodb-adapter/master" target="_blank">
   <image src="https://img.shields.io/circleci/build/github/juicycleff/casbin-mongodb-adapter/master" alt="Build" />
 </a>
+<a href="https://img.shields.io/codecov/c/gh/juicycleff/casbin-mongodb-adapter" target="_blank">
+  <image src="https://img.shields.io/codecov/c/gh/juicycleff/casbin-mongodb-adapter" alt="Build" />
+</a>
 
 ## Getting Started
 
