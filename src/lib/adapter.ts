@@ -19,7 +19,7 @@ export class MongoAdapter implements Adapter {
    */
   public static async newAdapter(adapterOption: MongoAdapterOptions) {
     const {
-      uri = 'mongodb://localhost:27017',
+      uri,
       option,
       collectionName = 'casbin',
       databaseName = 'casbindb'
@@ -50,9 +50,9 @@ export class MongoAdapter implements Adapter {
     try {
       // Create a new MongoClient
       this.mongoClient = new MongoClient(uri, {
+        ...option,
         useUnifiedTopology: true,
         useNewUrlParser: true,
-        ...option
       });
     } catch (error) {
       throw new Error(error.message);
@@ -160,24 +160,25 @@ export class MongoAdapter implements Adapter {
     await this.getCollection().deleteMany(line);
   }
 
-  private async open() {
+  async open() {
     try {
-      // Use connect method to connect to the Server
-      this.mongoClient.connect(err => {
-        if (err) {
-          throw new Error(err.message);
-        }
-      });
+      await this.mongoClient.connect();
     } catch (error) {
       throw new Error(error.message);
     }
   }
 
   private getCollection(): Collection {
+    if (this.mongoClient.isConnected === undefined) {
+      throw new Error('Mongo not connected');
+    }
     return this.mongoClient.db(this.dbName).collection(this.collectionName);
   }
 
   private getDatabase(): Db {
+    if (this.mongoClient.isConnected === undefined) {
+      throw new Error('Mongo not connected');
+    }
     return this.mongoClient.db(this.dbName);
   }
 
