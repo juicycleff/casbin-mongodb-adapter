@@ -32,7 +32,6 @@ export class MongoAdapter implements Adapter {
 
     const a = new MongoAdapter(uri, databaseName, collectionName, option);
     await a.open();
-    await a.createDBIndex();
     return a;
   }
 
@@ -184,6 +183,7 @@ export class MongoAdapter implements Adapter {
   async open() {
     try {
       await this.mongoClient.connect();
+      await this.createDBIndex();
     } catch (error) {
       throw new Error(error.message);
     }
