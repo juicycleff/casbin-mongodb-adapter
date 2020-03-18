@@ -1,6 +1,6 @@
 {
   "name": "casbin-mongodb-adapter",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Pure MongoDB adapter for Casbin",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
@@ -50,7 +50,6 @@
     "node": ">=8.9"
   },
   "dependencies": {
-    "casbin": "^3.0.4",
     "sha.js": "^2.4.11"
   },
   "devDependencies": {
@@ -77,8 +76,8 @@
     "typescript": "^3.5.3"
   },
   "peerDependencies": {
-    "casbin": "^3.0.4",
-    "mongodb": "^3.3.3"
+    "casbin": "^4.1.1",
+    "mongodb": "^3.5.5"
   },
   "ava": {
     "failFast": true,

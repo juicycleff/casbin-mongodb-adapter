@@ -15,7 +15,7 @@ interface MongoAdapterOptions {
 export class MongoAdapter implements Adapter {
   /**
    * newAdapter is the constructor.
-   * @param option mongo connection option
+   * @param adapterOption
    */
   public static async newAdapter(adapterOption: MongoAdapterOptions) {
     const {
@@ -24,14 +24,15 @@ export class MongoAdapter implements Adapter {
       collectionName = 'casbin',
       databaseName = 'casbindb'
     } = adapterOption;
+
     const a = new MongoAdapter(uri, databaseName, collectionName, option);
     await a.open();
     return a;
   }
 
-  private dbName: string;
-  private mongoClient: MongoClient;
-  private collectionName: string;
+  private readonly dbName: string;
+  private readonly mongoClient: MongoClient;
+  private readonly collectionName: string;
 
   private constructor(
     uri: string,
@@ -39,7 +40,7 @@ export class MongoAdapter implements Adapter {
     collectionName: string,
     option?: MongoClientOptions
   ) {
-    if (!uri || typeof uri !== 'string') {
+    if (!uri) {
       throw new Error('You must provide Mongo URI to connect to!');
     }
 
