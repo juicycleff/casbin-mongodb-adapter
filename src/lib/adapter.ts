@@ -32,6 +32,7 @@ export class MongoAdapter implements Adapter {
 
     const a = new MongoAdapter(uri, databaseName, collectionName, option);
     await a.open();
+    await a.createDBIndex();
     return a;
   }
 
@@ -171,6 +172,8 @@ export class MongoAdapter implements Adapter {
       const indexFields: string[] = ['ptype', 'v0', 'v1', 'v2', 'v3', 'v4', 'v5'];
       for (const name of indexFields) {
         await this.getCollection().createIndex({[name]: 1});
+        // tslint:disable-next-line:no-console
+        console.info('Index created for ' + name);
       }
     } catch (e) {
       // tslint:disable-next-line:no-console
