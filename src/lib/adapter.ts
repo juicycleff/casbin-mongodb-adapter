@@ -4,7 +4,6 @@ import {
   MongoClient,
   MongoClientOptions,
   Db,
-  IndexSpecification
 } from 'mongodb';
 import { CasbinRule } from './casbin-rule.entity';
 
@@ -167,25 +166,16 @@ export class MongoAdapter implements Adapter {
     await this.getCollection().deleteMany(line);
   }
 
-  async createDBIndex() {
+  public async createDBIndex() {
     const indexFields: string[] = ['ptype', 'v0', 'v1', 'v2', 'v3', 'v4', 'v5'];
-    const indexes: IndexSpecification[] = [];
-
     for (const name of indexFields) {
-      indexes.push({
-        key: {
-          name: 1,
-        },
-        name,
-      })
+      await this.getCollection().createIndex({[name]: 1});
     }
-    await this.getCollection().createIndexes(indexes)
   }
 
   async open() {
     try {
       await this.mongoClient.connect();
-      await this.createDBIndex();
     } catch (error) {
       throw new Error(error.message);
     }
