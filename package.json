@@ -50,7 +50,9 @@
     "node": ">=8.9"
   },
   "dependencies": {
-    "sha.js": "^2.4.11"
+    "sha.js": "^2.4.11",
+    "casbin": "^4.1.1",
+    "mongodb": "^3.5.5"
   },
   "devDependencies": {
     "@bitjson/npm-scripts-info": "^1.0.0",
