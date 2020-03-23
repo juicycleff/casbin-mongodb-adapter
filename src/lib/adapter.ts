@@ -3,7 +3,7 @@ import {
   Collection,
   MongoClient,
   MongoClientOptions,
-  Db,
+  Db, FilterQuery
 } from 'mongodb';
 import { CasbinRule } from './casbin-rule.entity';
 
@@ -34,6 +34,8 @@ export class MongoAdapter implements Adapter {
     await a.open();
     return a;
   }
+
+  public isFiltered: boolean = false;
 
   private readonly dbName: string;
   private readonly mongoClient: MongoClient;
@@ -75,8 +77,16 @@ export class MongoAdapter implements Adapter {
    * loadPolicy loads all policy rules from the storage.
    */
   public async loadPolicy(model: Model) {
+    await this.loadFilteredPolicy(model)
+  }
+
+  /**
+   * loadPolicy loads filtered policy rules from the storage.
+   */
+  public async loadFilteredPolicy(model: Model, filter?: FilterQuery<any>) {
+    this.isFiltered = filter != null;
     const lines = await this.getCollection()
-      .find()
+      .find(filter)
       .toArray();
 
     for (const line of lines) {
@@ -129,7 +139,7 @@ export class MongoAdapter implements Adapter {
    */
   public async removePolicy(_sec: string, ptype: string, rule: string[]) {
     const line = this.savePolicyLine(ptype, rule);
-    await this.getCollection().deleteMany(line);
+    await this.getCollection().deleteOne(line);
   }
 
   /**
@@ -145,22 +155,22 @@ export class MongoAdapter implements Adapter {
 
     line.ptype = ptype;
 
-    if (fieldIndex <= 0 && 0 < fieldIndex + fieldValues.length) {
+    if (fieldIndex <= 0 && 0 < (fieldIndex + fieldValues.length)) {
       line.v0 = fieldValues[0 - fieldIndex];
     }
-    if (fieldIndex <= 1 && 1 < fieldIndex + fieldValues.length) {
+    if (fieldIndex <= 1 && 1 < (fieldIndex + fieldValues.length)) {
       line.v1 = fieldValues[1 - fieldIndex];
     }
-    if (fieldIndex <= 2 && 2 < fieldIndex + fieldValues.length) {
+    if (fieldIndex <= 2 && 2 < (fieldIndex + fieldValues.length)) {
       line.v2 = fieldValues[2 - fieldIndex];
     }
-    if (fieldIndex <= 3 && 3 < fieldIndex + fieldValues.length) {
+    if (fieldIndex <= 3 && 3 < (fieldIndex + fieldValues.length)) {
       line.v3 = fieldValues[3 - fieldIndex];
     }
-    if (fieldIndex <= 4 && 4 < fieldIndex + fieldValues.length) {
+    if (fieldIndex <= 4 && 4 < (fieldIndex + fieldValues.length)) {
       line.v4 = fieldValues[4 - fieldIndex];
     }
-    if (fieldIndex <= 5 && 5 < fieldIndex + fieldValues.length) {
+    if (fieldIndex <= 5 && 5 < (fieldIndex + fieldValues.length)) {
       line.v5 = fieldValues[5 - fieldIndex];
     }
     await this.getCollection().deleteMany(line);
@@ -169,11 +179,16 @@ export class MongoAdapter implements Adapter {
   public async createDBIndex() {
     try {
       const indexFields: string[] = ['ptype', 'v0', 'v1', 'v2', 'v3', 'v4', 'v5'];
+      let keysDoc = {};
       for (const name of indexFields) {
-        await this.getCollection().createIndex({[name]: 1});
-        // tslint:disable-next-line:no-console
-        console.info('Index created for ' + name);
+        keysDoc = {
+          ...keysDoc,
+          [name]: 1,
+        }
       }
+      await this.getCollection().createIndex(keysDoc);
+      // tslint:disable-next-line:no-console
+      console.info('Indexes created');
     } catch (e) {
       // tslint:disable-next-line:no-console
       console.error(e);
@@ -219,12 +234,7 @@ export class MongoAdapter implements Adapter {
   }
 
   private loadPolicyLine(line: CasbinRule, model: Model) {
-    const result =
-      line.ptype +
-      ', ' +
-      [line.v0, line.v1, line.v2, line.v3, line.v4, line.v5]
-        .filter(n => n)
-        .join(', ');
+    const result = line.ptype + ', ' + [line.v0, line.v1, line.v2, line.v3, line.v4, line.v5].filter(n => n).join(', ');
     Helper.loadPolicyLine(result, model);
   }
 

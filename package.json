@@ -1,6 +1,6 @@
 {
   "name": "casbin-mongodb-adapter",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "Pure MongoDB adapter for Casbin",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
