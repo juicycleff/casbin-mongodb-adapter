@@ -57,8 +57,9 @@ export class MongoAdapter implements Adapter {
 
     try {
       // Create a new MongoClient
+      const sharedOptions = option !== null ? option : {};
       this.mongoClient = new MongoClient(uri, {
-        ...option,
+        ...sharedOptions,
         useUnifiedTopology: true,
         useNewUrlParser: true,
       });
