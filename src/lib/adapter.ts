@@ -12,6 +12,7 @@ interface MongoAdapterOptions {
   readonly option?: MongoClientOptions;
   readonly databaseName: string;
   readonly collectionName: string;
+  readonly filtered?: boolean;
 }
 
 /**
@@ -27,10 +28,11 @@ export class MongoAdapter implements Adapter {
       uri,
       option,
       collectionName = 'casbin',
-      databaseName = 'casbindb'
+      databaseName = 'casbindb',
+      filtered = false
     } = adapterOption;
 
-    const a = new MongoAdapter(uri, databaseName, collectionName, option);
+    const a = new MongoAdapter(uri, databaseName, collectionName, filtered, option);
     await a.open();
     return a;
   }
@@ -45,7 +47,8 @@ export class MongoAdapter implements Adapter {
     uri: string,
     dbName: string,
     collectionName: string,
-    option?: MongoClientOptions
+    filtered: boolean,
+    option?: MongoClientOptions,
   ) {
     if (!uri) {
       throw new Error('You must provide Mongo URI to connect to!');
@@ -54,6 +57,7 @@ export class MongoAdapter implements Adapter {
     // Cache the mongo uri and db name for later use
     this.dbName = dbName;
     this.collectionName = collectionName;
+    this.isFiltered = filtered;
 
     try {
       // Create a new MongoClient
@@ -85,13 +89,27 @@ export class MongoAdapter implements Adapter {
    * loadPolicy loads filtered policy rules from the storage.
    */
   public async loadFilteredPolicy(model: Model, filter?: FilterQuery<any>) {
-    this.isFiltered = filter != null;
-    const lines = await this.getCollection()
-      .find(filter)
-      .toArray();
+    try {
+      let lines;
 
-    for (const line of lines) {
-      this.loadPolicyLine(line, model);
+      if (this.isFiltered) {
+        lines = await this.getCollection()
+          .find(filter)
+          .toArray();
+      }
+      else {
+        lines = await this.getCollection()
+          .find()
+          .toArray();
+      }
+
+      for (const line of lines) {
+        this.loadPolicyLine(line, model);
+      }
+    } catch (e) {
+      // tslint:disable-next-line:no-console
+      console.error(e);
+      throw new Error(e);
     }
   }
 
@@ -180,14 +198,10 @@ export class MongoAdapter implements Adapter {
   public async createDBIndex() {
     try {
       const indexFields: string[] = ['ptype', 'v0', 'v1', 'v2', 'v3', 'v4', 'v5'];
-      let keysDoc = {};
+
       for (const name of indexFields) {
-        keysDoc = {
-          ...keysDoc,
-          [name]: 1,
-        }
+        await this.getCollection().createIndex({[name]: 1});
       }
-      await this.getCollection().createIndex(keysDoc);
       // tslint:disable-next-line:no-console
       console.info('Indexes created');
     } catch (e) {
