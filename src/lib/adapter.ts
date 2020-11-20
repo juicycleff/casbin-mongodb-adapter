@@ -170,7 +170,7 @@ export class MongoAdapter implements Adapter {
     fieldIndex: number,
     ...fieldValues: string[]
   ) {
-    const line = new CasbinRule();
+    const line = {};
 
     line.ptype = ptype;
 
