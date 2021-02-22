@@ -37,7 +37,7 @@ export class MongoAdapter implements Adapter {
     return a;
   }
 
-  public isFiltered: boolean = false;
+  public useFilter: boolean = false;
 
   private readonly dbName: string;
   private readonly mongoClient: MongoClient;
@@ -57,7 +57,7 @@ export class MongoAdapter implements Adapter {
     // Cache the mongo uri and db name for later use
     this.dbName = dbName;
     this.collectionName = collectionName;
-    this.isFiltered = filtered;
+    this.useFilter = filtered;
 
     try {
       // Create a new MongoClient
@@ -92,7 +92,7 @@ export class MongoAdapter implements Adapter {
     try {
       let lines;
 
-      if (this.isFiltered) {
+      if (this.useFilter) {
         lines = await this.getCollection()
           .find(filter)
           .toArray();
