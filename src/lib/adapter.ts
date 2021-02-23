@@ -12,8 +12,8 @@ import { CasbinRule } from './casbin-rule.entity';
 interface MongoAdapterOptions {
   readonly uri: string;
   readonly option?: MongoClientOptions;
-  readonly databaseName: string;
-  readonly collectionName: string;
+  readonly database: string;
+  readonly collection: string;
   readonly filtered?: boolean;
   readonly debug?: boolean;
 }
@@ -32,35 +32,29 @@ export class MongoAdapter implements Adapter {
     const {
       uri,
       option,
-      collectionName = 'casbin',
-      databaseName = 'casbindb',
+      collection = 'casbin',
+      database = 'casbindb',
       filtered = false,
       debug = false
     } = adapterOption;
 
     logger.state.isEnabled = debug;
 
-    const a = new MongoAdapter(
-      uri,
-      databaseName,
-      collectionName,
-      filtered,
-      option
-    );
+    const a = new MongoAdapter(uri, database, collection, filtered, option);
     await a.open();
     return a;
   }
 
   public useFilter: boolean = false;
 
-  private readonly dbName: string;
+  private readonly databaseName: string;
   private readonly mongoClient: MongoClient;
   private readonly collectionName: string;
 
   private constructor(
     uri: string,
-    dbName: string,
-    collectionName: string,
+    database: string,
+    collection: string,
     filtered: boolean,
     option?: MongoClientOptions
   ) {
@@ -69,18 +63,13 @@ export class MongoAdapter implements Adapter {
     }
 
     // Cache the mongo uri and db name for later use
-    this.dbName = dbName;
-    this.collectionName = collectionName;
+    this.databaseName = database;
+    this.collectionName = collection;
     this.useFilter = filtered;
 
     try {
       // Create a new MongoClient
-      const sharedOptions = option !== null ? option : {};
-      this.mongoClient = new MongoClient(uri, {
-        ...sharedOptions,
-        useUnifiedTopology: true,
-        useNewUrlParser: true
-      });
+      this.mongoClient = new MongoClient(uri, option);
     } catch (error) {
       throw new Error(error.message);
     }
@@ -248,14 +237,16 @@ export class MongoAdapter implements Adapter {
     if (this.mongoClient.isConnected === undefined) {
       throw new Error('Casbin mongo adapter not connected');
     }
-    return this.mongoClient.db(this.dbName).collection(this.collectionName);
+    return this.mongoClient
+      .db(this.databaseName)
+      .collection(this.collectionName);
   }
 
   private getDatabase(): Db {
     if (this.mongoClient.isConnected === undefined) {
       throw new Error('Casbin mongo adapter not connected');
     }
-    return this.mongoClient.db(this.dbName);
+    return this.mongoClient.db(this.databaseName);
   }
 
   private async clearCollection() {

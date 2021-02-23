@@ -22,8 +22,8 @@ test.before('Setting up Casbin and Adapter', async () => {
     const uri = await mongod.getUri();
     adapter = await MongoAdapter.newAdapter({
       uri,
-      collectionName: 'casbin',
-      databaseName: 'casbindb'
+      collection: 'casbin',
+      database: 'casbindb'
     });
     e = await newEnforcer(m, adapter);
   } catch (error) {
@@ -36,8 +36,8 @@ test('Missing Mongo URI', async t => {
     MongoAdapter.newAdapter({
       // @ts-ignore
       uri: null,
-      collectionName: 'casbin',
-      databaseName: 'casbindb'
+      collection: 'casbin',
+      database: 'casbindb'
     })
   );
 });
@@ -46,8 +46,8 @@ test('Wrong Mongo Connection String', async t => {
   await t.throwsAsync(
     MongoAdapter.newAdapter({
       uri: 'wrong',
-      collectionName: 'casbin',
-      databaseName: 'casbindb'
+      collection: 'casbin',
+      database: 'casbindb'
     })
   );
 });
