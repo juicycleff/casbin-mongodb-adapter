@@ -19,7 +19,7 @@ m.addDef('m', 'm', 'g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act');
 
 test.before('Setting up Casbin and Adapter', async () => {
   try {
-    const uri = await mongod.getConnectionString();
+    const uri = await mongod.getUri();
     adapter = await MongoAdapter.newAdapter({
       uri,
       collectionName: 'casbin',
