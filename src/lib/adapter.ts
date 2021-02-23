@@ -6,6 +6,7 @@ import {
   Db,
   FilterQuery
 } from 'mongodb';
+import logdown from 'logdown';
 import { CasbinRule } from './casbin-rule.entity';
 
 interface MongoAdapterOptions {
@@ -14,7 +15,10 @@ interface MongoAdapterOptions {
   readonly databaseName: string;
   readonly collectionName: string;
   readonly filtered?: boolean;
+  readonly debug?: boolean;
 }
+
+const logger = logdown('CasbinMongoAdapter');
 
 /**
  * TypeORMAdapter represents the TypeORM adapter for policy storage.
@@ -30,8 +34,11 @@ export class MongoAdapter implements Adapter {
       option,
       collectionName = 'casbin',
       databaseName = 'casbindb',
-      filtered = false
+      filtered = false,
+      debug = false
     } = adapterOption;
+
+    logger.state.isEnabled = debug;
 
     const a = new MongoAdapter(
       uri,
@@ -113,8 +120,7 @@ export class MongoAdapter implements Adapter {
         this.loadPolicyLine(line, model);
       }
     } catch (e) {
-      // tslint:disable-next-line:no-console
-      console.error(e);
+      logger.error(e);
       throw new Error(e);
     }
   }
@@ -223,11 +229,9 @@ export class MongoAdapter implements Adapter {
       for (const name of indexFields) {
         await this.getCollection().createIndex({ [name]: 1 });
       }
-      // tslint:disable-next-line:no-console
-      console.info('Indexes created');
+      logger.info('Indexes created');
     } catch (e) {
-      // tslint:disable-next-line:no-console
-      console.error(e);
+      logger.error(e);
     }
   }
 

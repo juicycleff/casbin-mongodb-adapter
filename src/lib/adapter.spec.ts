@@ -52,7 +52,6 @@ test('Wrong Mongo Connection String', async t => {
   );
 });
 
-
 test('Open adapter connection', async t => {
   await t.notThrowsAsync(adapter.open());
 });
