@@ -45,8 +45,8 @@ async function myFunction() {
 
   const adapter = await MongoAdapter.newAdapter({
     uri: 'mongodb://localhost:27017',
-    collectionName: 'casbin',
-    databaseName: 'node-casbin-official'
+    collection: 'casbin',
+    database: 'node-casbin-official'
   });
 
   const e = await newEnforcer(model, adapter);
@@ -77,8 +77,8 @@ import { MongoAdapter } from 'casbin-mongodb-adapter';
 
 const adapter = await MongoAdapter.newAdapter({
   uri: 'mongodb://localhost:27017',
-  collectionName: 'casbin',
-  databaseName: 'node-casbin-official',
+  collection: 'casbin',
+  database: 'node-casbin-official',
   option: {
     ...mongoOptions
   }
