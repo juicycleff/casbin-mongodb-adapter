@@ -52,6 +52,15 @@ test('Wrong Mongo Connection String', async t => {
   );
 });
 
+
+test('Open adapter connection', async t => {
+  await t.notThrowsAsync(adapter.open());
+});
+
+test('Creates DB indexes', async t => {
+  await t.notThrowsAsync(adapter.createDBIndex());
+});
+
 test('Add policy', t => {
   t.truthy(e.addPolicy('alice', 'data3', 'read'));
 });
