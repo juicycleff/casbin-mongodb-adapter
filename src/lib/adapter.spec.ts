@@ -32,7 +32,7 @@ test.before('Setting up Casbin and Adapter', async () => {
 });
 
 test('Missing Mongo URI', async t => {
-  await t.throwsAsync(async () =>
+  const error = await t.throwsAsync(
     MongoAdapter.newAdapter({
       // @ts-ignore
       uri: null,
@@ -40,16 +40,18 @@ test('Missing Mongo URI', async t => {
       database: 'casbindb'
     })
   );
+  t.is(error.message, 'you must provide mongo URI to connect to!');
 });
 
 test('Wrong Mongo Connection String', async t => {
-  await t.throwsAsync(
+  const error = await t.throwsAsync(
     MongoAdapter.newAdapter({
       uri: 'wrong',
       collection: 'casbin',
       database: 'casbindb'
     })
   );
+  t.is(error.message, 'Invalid connection string');
 });
 
 test('Open adapter connection', async t => {

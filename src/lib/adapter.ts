@@ -59,7 +59,7 @@ export class MongoAdapter implements Adapter {
     option?: MongoClientOptions
   ) {
     if (!uri) {
-      throw new Error('You must provide Mongo URI to connect to!');
+      throw new Error('you must provide mongo URI to connect to!');
     }
 
     // Cache the mongo uri and db name for later use
