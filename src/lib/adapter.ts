@@ -1,4 +1,4 @@
-import { Adapter, Helper, Model } from 'casbin';
+import { Helper, Model, BatchAdapter, FilteredAdapter } from 'casbin';
 import {
   Collection,
   MongoClient,
@@ -23,7 +23,7 @@ const logger = logdown('CasbinMongoAdapter');
 /**
  * TypeORMAdapter represents the TypeORM adapter for policy storage.
  */
-export class MongoAdapter implements Adapter {
+export class MongoAdapter implements FilteredAdapter, BatchAdapter {
   /**
    * newAdapter is the constructor.
    * @param adapterOption
@@ -73,6 +73,10 @@ export class MongoAdapter implements Adapter {
     } catch (error) {
       throw new Error(error.message);
     }
+  }
+
+  isFiltered(): boolean {
+    return this.useFilter;
   }
 
   public async close() {
@@ -167,6 +171,28 @@ export class MongoAdapter implements Adapter {
   public async removePolicy(_sec: string, ptype: string, rule: string[]) {
     const line = this.savePolicyLine(ptype, rule);
     await this.getCollection().deleteOne(line);
+  }
+
+  /**
+   * addPolicies adds many policies with rules to the storage.
+   */
+  public async addPolicies(_sec: string, ptype: string, rules: string[][]): Promise<void> {
+    const lines = [];
+    for (const r of rules) {
+      lines.push(this.savePolicyLine(ptype, r));
+    }
+    await this.getCollection().insertMany(lines);
+  }
+
+  /**
+   * removeFilteredPolicy removes many policy rules from the storage.
+   */
+  public async removePolicies(_sec: string, ptype: string, rules: string[][]): Promise<void> {
+    const lines = [];
+    for (const r of rules) {
+      lines.push(this.savePolicyLine(ptype, r));
+    }
+    await this.getCollection().deleteMany(lines);
   }
 
   /**

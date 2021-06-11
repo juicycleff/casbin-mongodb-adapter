@@ -50,14 +50,12 @@
     "node": ">=8.9"
   },
   "dependencies": {
-    "casbin": "^5.4.1",
     "logdown": "^3.3.1",
-    "mongodb": "^3.6.4",
     "sha.js": "^2.4.11"
   },
   "peerDependencies": {
-    "casbin": "^5.4.1",
-    "mongodb": "^3.6.4"
+    "casbin": "^5.7.1",
+    "mongodb": "^3.6.9"
   },
   "devDependencies": {
     "@bitjson/npm-scripts-info": "^1.0.0",
