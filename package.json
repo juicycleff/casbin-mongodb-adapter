@@ -58,6 +58,8 @@
     "mongodb": "^3.6.9"
   },
   "devDependencies": {
+    "casbin": "^5.7.1",
+    "mongodb": "^3.6.9",
     "@bitjson/npm-scripts-info": "^1.0.0",
     "@bitjson/typedoc": "^0.15.0-0",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
