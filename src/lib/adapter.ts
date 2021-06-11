@@ -176,7 +176,11 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
   /**
    * addPolicies adds many policies with rules to the storage.
    */
-  public async addPolicies(_sec: string, ptype: string, rules: string[][]): Promise<void> {
+  public async addPolicies(
+    _sec: string,
+    ptype: string,
+    rules: string[][]
+  ): Promise<void> {
     const lines = [];
     for (const r of rules) {
       lines.push(this.savePolicyLine(ptype, r));
@@ -187,7 +191,11 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
   /**
    * removeFilteredPolicy removes many policy rules from the storage.
    */
-  public async removePolicies(_sec: string, ptype: string, rules: string[][]): Promise<void> {
+  public async removePolicies(
+    _sec: string,
+    ptype: string,
+    rules: string[][]
+  ): Promise<void> {
     const lines = [];
     for (const r of rules) {
       lines.push(this.savePolicyLine(ptype, r));
