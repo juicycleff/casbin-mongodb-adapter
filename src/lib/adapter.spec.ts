@@ -86,6 +86,18 @@ test('Add policy against adapter', async t => {
   await t.notThrowsAsync(adapter.addPolicy('alice', 'data5', ['read']));
 });
 
+test('Add policies successfully', async t => {
+  await t.notThrowsAsync(
+    adapter.addPolicies('', 'john', [['create'], ['write']])
+  );
+});
+
+test('Removes policies successfully', async t => {
+  await t.notThrowsAsync(
+    adapter.removePolicies('', 'john', [['create'], ['write']])
+  );
+});
+
 test('Remove filtered policy against adapter', async t => {
   await t.notThrowsAsync(
     adapter.removeFilteredPolicy('alice', 'data5', 0, 'read')
