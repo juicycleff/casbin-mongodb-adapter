@@ -80,8 +80,10 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
   }
 
   public async close() {
-    if (this.mongoClient && this.mongoClient.isConnected) {
+    try {
       await this.mongoClient.close();
+    } catch (error) {
+      throw new Error('MongoDB is not connected');
     }
   }
 
@@ -275,19 +277,21 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
   }
 
   private getCollection(): Collection {
-    if (this.mongoClient.isConnected === undefined) {
-      throw new Error('Casbin mongo adapter not connected');
+    try {
+      return this.mongoClient
+        .db(this.databaseName)
+        .collection(this.collectionName);
+    } catch (error) {
+      throw new Error('MongoDB is not connected');
     }
-    return this.mongoClient
-      .db(this.databaseName)
-      .collection(this.collectionName);
   }
 
   private getDatabase(): Db {
-    if (this.mongoClient.isConnected === undefined) {
-      throw new Error('Casbin mongo adapter not connected');
+    try {
+      return this.mongoClient.db(this.databaseName);
+    } catch (error) {
+      throw new Error('MongoDB is not connected');
     }
-    return this.mongoClient.db(this.databaseName);
   }
 
   private async clearCollection() {
