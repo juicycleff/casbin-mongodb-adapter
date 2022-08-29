@@ -221,7 +221,7 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
     fieldIndex: number,
     ...fieldValues: string[]
   ) {
-    const line = new CasbinRule();
+    const line = {};
 
     line.ptype = ptype;
 
