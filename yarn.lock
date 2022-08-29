@@ -371,14 +371,14 @@
 
 "@types/mongodb-memory-server@^2.3.0":
   version "2.3.0"
-  resolved "https://registry.npmjs.org/@types/mongodb-memory-server/-/mongodb-memory-server-2.3.0.tgz"
+  resolved "https://registry.yarnpkg.com/@types/mongodb-memory-server/-/mongodb-memory-server-2.3.0.tgz#da9dc2c9ab52d936d28c04d519d6a4a380c922ef"
   integrity sha512-nveg+f78qRwudPRFVfw2flEdEkhKJIr4rSyQFKagSMb4sGhjFQi0GEKi7zKXgkKkwIlMcLthM1G93vsXgtDxGQ==
   dependencies:
     mongodb-memory-server "*"
 
 "@types/mongodb@^4.0.7":
   version "4.0.7"
-  resolved "https://registry.npmjs.org/@types/mongodb/-/mongodb-4.0.7.tgz"
+  resolved "https://registry.yarnpkg.com/@types/mongodb/-/mongodb-4.0.7.tgz#ebaa80c53b684ea52ccfe7721c0f5c9ef7b4f511"
   integrity sha512-lPUYPpzA43baXqnd36cZ9xxorprybxXDzteVKCPAdp14ppHtFJHnXYvNpmBvtMUTb5fKXVv6sVbzo1LHkWhJlw==
   dependencies:
     mongodb "*"
@@ -963,10 +963,10 @@ caniuse-lite@^1.0.30001181:
   resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001191.tgz"
   integrity sha512-xJJqzyd+7GCJXkcoBiQ1GuxEiOBCLQ0aVW9HMekifZsAVGdj5eJ4mFB9fEhSHipq9IOk/QXFJUiIr9lZT+EsGw==
 
-casbin@^5.12.0:
-  version "5.12.0"
-  resolved "https://registry.npmjs.org/casbin/-/casbin-5.12.0.tgz"
-  integrity sha512-caM4NmUQxlClUcr+EdDrvxsxIr1QDataCyMcDn82GO0At+DVWhAB567RT4LJOMjYlVHiuHPKbNM7Sr4rRBaNOQ==
+casbin@^5.17.0:
+  version "5.17.0"
+  resolved "https://registry.yarnpkg.com/casbin/-/casbin-5.17.0.tgz#772f9e0be25ce57f6864a79b409f3d71ffb0dbaf"
+  integrity sha512-QIm9bTDU0ALYfnD5ePMiNxgN8Xh03PaC8zRtpZvWBwehBnq++FjvuPGFifRHnflkx2g1w8A+ycZXarrNXmzJOw==
   dependencies:
     await-lock "^2.0.1"
     csv-parse "^4.15.3"
