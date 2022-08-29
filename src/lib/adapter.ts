@@ -4,7 +4,7 @@ import {
   MongoClient,
   MongoClientOptions,
   Db,
-  FilterQuery
+  Filter
 } from 'mongodb';
 import logdown from 'logdown';
 import { CasbinRule } from './casbin-rule.entity';
@@ -70,7 +70,7 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
     try {
       // Create a new MongoClient
       this.mongoClient = new MongoClient(uri, option);
-    } catch (error) {
+    } catch (error: any) {
       throw new Error(error.message);
     }
   }
@@ -97,13 +97,13 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
   /**
    * loadPolicy loads filtered policy rules from the storage.
    */
-  public async loadFilteredPolicy(model: Model, filter?: FilterQuery<any>) {
+  public async loadFilteredPolicy(model: Model, filter?: Filter<any>) {
     try {
       let lines;
 
       if (this.useFilter) {
         lines = await this.getCollection()
-          .find(filter)
+          .find(filter as Filter<any>)
           .toArray();
       } else {
         lines = await this.getCollection()
@@ -112,9 +112,9 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
       }
 
       for (const line of lines) {
-        this.loadPolicyLine(line, model);
+        this.loadPolicyLine(line as CasbinRule, model);
       }
-    } catch (e) {
+    } catch (e: any) {
       logger.error(e);
       throw new Error(e);
     }
@@ -221,7 +221,7 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
     fieldIndex: number,
     ...fieldValues: string[]
   ) {
-    const line = {};
+    const line = {} as any;
 
     line.ptype = ptype;
 
@@ -271,7 +271,7 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
     try {
       await this.mongoClient.connect();
       await this.createDBIndex();
-    } catch (error) {
+    } catch (error: any) {
       throw new Error(error.message);
     }
   }

@@ -26,7 +26,7 @@ test.before('Setting up Casbin and Adapter', async () => {
       database: 'casbindb'
     });
     e = await newEnforcer(m, adapter);
-  } catch (error) {
+  } catch (error: any) {
     throw new Error(error.message);
   }
 });

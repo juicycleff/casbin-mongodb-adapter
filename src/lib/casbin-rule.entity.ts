@@ -1,10 +1,10 @@
-import { ObjectID } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
 /**
  * Casbin Entity
  */
 export class CasbinRule {
-  public _id!: ObjectID;
+  public _id!: ObjectId;
 
   public ptype!: string;
 
