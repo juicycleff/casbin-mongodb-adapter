@@ -1,31 +1,31 @@
-import { ObjectId } from 'mongodb';
+/**
+ * Represents a Casbin Rule
+ */
+export interface CasbinRule {
+  ptype?: string;
+  v0?: string;
+  v1?: string;
+  v2?: string;
+  v3?: string;
+  v4?: string;
+  v5?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 /**
- * Casbin Entity
+ * Creates a Casbin Rule object
  */
-export class CasbinRule {
-  public _id!: ObjectId;
+export function createCasbinRule(options?: {
+  includeTimestamps?: boolean;
+}): CasbinRule {
+  const rule: CasbinRule = {};
 
-  public ptype!: string;
-
-  public v0!: string;
-
-  public v1!: string;
-
-  public v2!: string;
-
-  public v3!: string;
-
-  public v4!: string;
-
-  public v5!: string;
-
-  public createdAt?: Date | string;
-
-  public updatedAt?: Date | string;
-
-  constructor() {
-    this.createdAt = new Date().toISOString();
-    this.updatedAt = new Date().toISOString();
+  if (options?.includeTimestamps) {
+    const now = new Date().toISOString();
+    rule.createdAt = now;
+    rule.updatedAt = now;
   }
+
+  return rule;
 }
