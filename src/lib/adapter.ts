@@ -7,7 +7,7 @@ import {
   Filter
 } from 'mongodb';
 import logdown from 'logdown';
-import { CasbinRule } from './casbin-rule.entity';
+import { CasbinRule, createCasbinRule } from './casbin-rule.entity';
 
 interface MongoAdapterOptions {
   readonly uri: string;
@@ -70,8 +70,8 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
     try {
       // Create a new MongoClient
       this.mongoClient = new MongoClient(uri, option);
-    } catch (error: any) {
-      throw new Error(error.message);
+    } catch (error) {
+      throw new Error((error as Error).message);
     }
   }
 
@@ -114,9 +114,9 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
       for (const line of lines) {
         this.loadPolicyLine(line as CasbinRule, model);
       }
-    } catch (e: any) {
+    } catch (e) {
       logger.error(e);
-      throw new Error(e);
+      throw new Error((e as Error).message);
     }
   }
 
@@ -171,7 +171,7 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
    * removePolicy removes a policy rule from the storage.
    */
   public async removePolicy(_sec: string, ptype: string, rule: string[]) {
-    const line = this.savePolicyLine(ptype, rule);
+    const line = this.deletePolicyLine(ptype, rule);
     await this.getCollection().deleteOne(line);
   }
 
@@ -200,7 +200,7 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
   ): Promise<void> {
     const lines = [];
     for (const r of rules) {
-      lines.push(this.savePolicyLine(ptype, r));
+      lines.push(this.deletePolicyLine(ptype, r));
     }
 
     const promises: Array<Promise<any>> = [];
@@ -271,8 +271,8 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
     try {
       await this.mongoClient.connect();
       await this.createDBIndex();
-    } catch (error: any) {
-      throw new Error(error.message);
+    } catch (error) {
+      throw new Error((error as Error).message);
     }
   }
 
@@ -281,7 +281,7 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
       return this.mongoClient
         .db(this.databaseName)
         .collection(this.collectionName);
-    } catch (error) {
+    } catch {
       throw new Error('MongoDB is not connected');
     }
   }
@@ -289,7 +289,7 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
   private getDatabase(): Db {
     try {
       return this.mongoClient.db(this.databaseName);
-    } catch (error) {
+    } catch {
       throw new Error('MongoDB is not connected');
     }
   }
@@ -304,7 +304,7 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
         await this.getCollection().drop();
       }
       return;
-    } catch (error) {
+    } catch {
       return;
     }
   }
@@ -319,29 +319,26 @@ export class MongoAdapter implements FilteredAdapter, BatchAdapter {
     Helper.loadPolicyLine(result, model);
   }
 
-  private savePolicyLine(ptype: string, rule: string[]): CasbinRule {
-    const line = new CasbinRule();
-
+  private populateCasbinRule(
+    line: CasbinRule,
+    ptype: string,
+    rule: string[]
+  ): void {
     line.ptype = ptype;
-    if (rule.length > 0) {
-      line.v0 = rule[0];
+    for (let i = 0; i < rule.length && i < 6; i++) {
+      line[`v${i}` as keyof CasbinRule] = rule[i]!;
     }
-    if (rule.length > 1) {
-      line.v1 = rule[1];
-    }
-    if (rule.length > 2) {
-      line.v2 = rule[2];
-    }
-    if (rule.length > 3) {
-      line.v3 = rule[3];
-    }
-    if (rule.length > 4) {
-      line.v4 = rule[4];
-    }
-    if (rule.length > 5) {
-      line.v5 = rule[5];
-    }
+  }
 
+  private savePolicyLine(ptype: string, rule: string[]): CasbinRule {
+    const line = createCasbinRule({ includeTimestamps: true });
+    this.populateCasbinRule(line, ptype, rule);
+    return line;
+  }
+
+  private deletePolicyLine(ptype: string, rule: string[]): CasbinRule {
+    const line = createCasbinRule({ includeTimestamps: false });
+    this.populateCasbinRule(line, ptype, rule);
     return line;
   }
 }
